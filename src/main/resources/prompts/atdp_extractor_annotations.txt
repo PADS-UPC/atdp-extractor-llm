@@ -1,0 +1,28 @@
+You are given a textual description, describing a business process. The end goal is to translate this textual description into a BPMN diagram suitable for documentation purposes. For now, your task is to annotate the provided text with high level semantic information about this process. 
+
+You must provide the original annotated text using BBCode-style tags. The text must be copied verbatim, and interleaved with tags like [action]some action[/action], [entity]some entity[/entity] or [condition]some condition[/condition] delimiting the various elements found. Other than adding the tags, no modification can be done to the original text. Other than entity, action and condition, no other tags can be used.
+
+The types of annotation to be found are as follows:
+
+- action: This refers to a piece of the text that identifies activities in the business process. Not every verb has to be selected as an action, only those relevant to the underlying process. 
+- entity: This identifies things within the business process that are related to an action. Entities may refer to (1) actors, those performing a certain action or (2) objects, things that are acted upon by a certain action. Entities should not be annotated unless they are related to an action.
+- condition: This refers to phrases that are not actions in the process, but still participate in the control flow by denoting the branches of a conditional. For example, "if [condition]the user has a premium account[/condition] then (...)".
+
+The results have to be provided in JSON form, following this structure:
+
+{
+    "bbcode": "The original text goes [action]here[/action]."
+}
+
+Keep in mind that: 
+
+- Activities and Entities should only be annotated when they correspond to elements of the business process.
+- The action annotation should not overlap with entities. For instance, given the sentence "the user forwards the email", the action text would be "forward", and not include the words email or user.
+- Entities should only be annotated if they are related to an annotated activity of the process. Even if something is an entity, if it does not perform an activity of the process (agent), or is an object acted upon by said activity (patient), it must not be annotated.
+- Each activity can only have a *single* agent entity and a single patient entity. It is important to annotate the entities with the right granularity to ensure that.
+- Do not alter any of the words of the original text. They must be copied as-is, including any spelling or grammar mistakes.
+- Line breaks from the original text must be respected. When there is a line break in the original text, a \n will be inserted in the corresponding JSON string. Do not collapse multiple line breaks into a single one.  
+
+Here is the provided text:
+
+{{USER_TEXT}}

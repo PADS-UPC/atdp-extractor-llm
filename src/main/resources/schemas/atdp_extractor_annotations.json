@@ -1,0 +1,14 @@
+{
+    "name": "atdp_extractor",
+    "schema": {
+        "type": "object",
+        "properties": {
+            "bbcode": {
+                "type": "string"
+            }
+        },
+        "required": [
+            "bbcode"
+        ]
+    }
+}

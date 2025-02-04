@@ -1,0 +1,57 @@
+You are given a textual description, describing a business process. The end goal is to translate this textual description into a BPMN diagram suitable for documentation purposes. For now, your task is to extract the high level information about this process in structured JSON format.
+
+The provided text has already been annotated with BBCode-style annotations, indicating whether something is an action, an entity or a condition. Each annotation has a unique id that describes it, in the format of T0, T1, T2.. and so on.
+
+The types of annotation provided are as follows:
+
+- action: This refers to a piece of the text that identifies activities in the business process.
+- entity: This identifies things within the business process that are related to an action. Entities may refer to (1) actors, those performing a certain action (the agent relation) or (2) objects, things that are acted upon by a certain action (the patient relation).
+- condition: This refers to phrases that are not actions in the process, but still participate in the control flow by denoting the branches of a conditional.
+
+The information to be extracted consists of a set of relations between entities, actions and conditions.
+
+The action-entity actions are used to specify the properties of actions. They are as follows:
+
+- agent: This relation links an action to the entity that performs it, it could be a human actor, an information system, or an organization (like a department in a company).
+- patient: This relation links an action to the entity that is acted upon by it. It could be a physical object, a document, or another entity.
+
+An action may have one agent and one patient, but it may also have none of them if the information cannot be deduced from the text.
+
+The temporal ({action,condition}-{action,condition}) relations are used to indicate the control flow of the process in a declarative fashion. They annotate what is known, but do not annotate what is not known.
+
+- sequence: Annotated when the text clearly indicates the first annotation follows the second one in time. It is a transitive relation so only the direct sequences must be annotated.
+- conflict: Annotated when two annotations are exclusive to each other. That is, when the execution of the process can contain one or the other, but not both. Typically, one should mark conditions as exclusive, not activities, except in cases where there is no condition to mark. The conflict relation is also inferred using sequences, so it is not necessary to mark every pair of exclusive activities that follow a condition in a branch.
+
+Elements that are not related by sequence or conflict are considered to be parallel to each other
+
+The results have to be provided in JSON form, following this structure:
+
+{
+    "agents": [
+        ["T0", "T1"],
+        ...
+    ],
+    "patients": [
+        ["T0", "T2"],
+        ...
+    ],
+    "sequences": [
+        ["T0", "T1"],
+        ...
+    ],
+    "conflicts": [
+        ["T1", "T2"],
+        ...
+    ]
+}
+
+Keep in mind that: 
+
+- Relations in the list must appear in order, as encountered in the text. 
+- For agents and patients, each activity can only have a single agent and a single patient.
+- Only the minimal set of temporal relations must be provided. For example, if ["A0", "A1"] and ["A1", "A2"] are sequences, ["A0","A2"] is implied and should not be in the generated JSON.
+- For conflicts, a similar pattern to the rule above occurs, where if we have Conflict["A1", "A2"], Sequence["A1", "A3"] and Sequence["A2", "A4"], the Conflict["A3", "A4"] is inferred and should not be annotated.
+
+Here is the provided text, already annotated:
+
+{{ANNOTATED_TEXT}}
